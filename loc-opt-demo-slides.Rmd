@@ -1,0 +1,99 @@
+---
+title: "How to Put Your Meetup on the Map (Literally)"
+subtitle: "Predictive Analytics World -- Government"
+author: Harlan D. Harris, Alan Briggs
+date: September 15, 2014
+output:
+  ioslides_presentation:
+    incremental: false
+    transition: faster
+---
+
+
+```{r setup, echo=FALSE, results='hide'}
+options(stringsAsFactors=FALSE)
+library(knitr)
+library(zipcode)
+suppressPackageStartupMessages(library(dplyr))        # for munging data
+suppressPackageStartupMessages(library(DEoptim)) # global optimization
+suppressPackageStartupMessages(library(rCharts))
+suppressMessages(library(rMaps)) # interactive maps!
+library(munsell)     # for colors
+```
+
+
+Misnomer
+--------
+
+### Predictive Analytics World -- Government
+
+Misnomer
+--------
+
+### ~~Predictive Analytics World -- Government~~
+
+### Prescriptive Analytics Local -- Community
+
+Themes
+------
+
+- 80/20 is **Cheap**
+- Open Source, Modern Tools are **Powerful**
+- ???
+
+Problem
+-------
+
+![Data Science DC Logo](DSDClogo2014_tr_400square.png)
+
+- 4000+ members; 150-250 attendees
+- **Where??**
+
+Budget
+------
+
+- $0.00
+- One half-decent data scientist (me)
+- One solid operations researcher (Alan)
+- A couple of weekends
+- One Macbook Air
+
+Data
+----
+
+- survey of Meetup members
+- ~140 respondents
+- home and work ZIP codes
+
+Some Data
+---------
+
+```{r load_data, echo=FALSE, results='asis'}
+dat <- subset(read.csv('DC2_Survey_Locations.csv', colClasses='character'), select=c(Home_ZIP, Work_ZIP))
+names(dat) <- tolower(names(dat))
+
+dat <- mutate(dat,
+              home_zip = sprintf("%05d", as.numeric(home_zip)),
+              work_zip = sprintf("%05d", as.numeric(work_zip)))
+
+data(zipcode)
+home_zip <- zipcode
+names(home_zip) <- paste0("home_", names(home_zip))
+work_zip <- zipcode
+names(work_zip) <- paste0("work_", names(work_zip))
+
+dat <- left_join(dat, home_zip, by='home_zip')
+dat <- left_join(dat, work_zip, by='work_zip')
+
+white_house <- c(38.8977, -77.0366) # lat, long
+dat <- subset(dat, (abs(home_latitude - white_house[[1]]) < 3.0 & 
+             abs(home_longitude - white_house[[2]]) < 3.0) |
+            (abs(work_latitude - white_house[[1]]) < 3.0 & 
+             abs(work_longitude - white_house[[2]]) < 3.0))
+dat <- subset(dat, !is.na(home_latitude))
+
+dat <- tbl_df(dat)
+
+kable(head(dat), format = "markdown")
+
+```
