@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 loc-opt-demo-slides.html
+loc-opt-demo-slides_cache
+loc-opt-demo-slides_files
+.DS_Store
