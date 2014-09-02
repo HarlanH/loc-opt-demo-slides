@@ -48,7 +48,7 @@ Themes
 - ???
 
 Problem
--------
+=======
 
 ![Data Science DC Logo](DSDClogo2014_tr_400square.png)
 
@@ -164,7 +164,8 @@ Goal
 - (or maybe more than one)
 - that makes all those orange lines happy
 
-- **Location Optimization**
+Location Optimization
+=====================
 
 Simple Example
 --------------
@@ -258,7 +259,7 @@ tbl2circlemap(qq)
 
 ```
 
-Jessup = $2/3 + 2/3 + 1/3 + 1/3 + 1/3 + 1/3 = 2\_ 2/3$
+Jessup = $2/3 + 2/3 + 1/3 + 1/3 + 1/3 + 1/3 = 2~2/3$
 
 Baltimore = $1 + 1 + 0 + 0 + 0 + 0 = 2$ 
 
@@ -300,8 +301,13 @@ Location Optimization Applications
 - Mosquito abatement
 - Sensor placement on robotics 
 
+Back to Meetups
+===============
+
 Cost Functions
 --------------
+
+__How good is a particular venue/location?__
 
 - Work Distance
 
@@ -324,10 +330,17 @@ Mapping R Code (tangent)
 
 here
 
+change slide background?
+
 Placing Venues on the Map
 -------------------------
 
 show how to compute costs of various peoples' work places, and map
+
+We Want the Best!
+================
+
+(ignoring roads, rivers, subways, traffic...)
 
 Optimization
 ------------
@@ -343,6 +356,9 @@ Winner!
 -------
 
 map
+
+But
+===
 
 Think of the Children...
 ------------------------
