@@ -27,7 +27,6 @@ opts_chunk$set(echo=FALSE, results='hide', cache=TRUE)
 
 ```
 
-
 Misnomer
 --------
 
@@ -36,7 +35,21 @@ Misnomer
 Misnomer
 --------
 
-### ~~Predictive Analytics World -- Government~~
+### ~~Predictive~~ Analytics World -- Government
+
+### Prescriptive Analytics
+
+Misnomer
+--------
+
+### ~~Predictive~~ Analytics ~~World~~ -- Government
+
+### Prescriptive Analytics Local
+
+Misnomer
+--------
+
+### ~~Predictive~~ Analytics ~~World~~ -- ~~Government~~
 
 ### Prescriptive Analytics Local -- Community
 
@@ -45,7 +58,7 @@ Themes
 
 - 80/20 is **Cheap**
 - Open Source, Modern Tools are **Powerful**
-- ???
+- **Optimization** is a key tool of Data Science (& Operations Research)
 
 Problem
 =======
@@ -94,10 +107,10 @@ dat <- left_join(dat, home_zip, by='home_zip')
 dat <- left_join(dat, work_zip, by='work_zip')
 
 white_house <- c(38.8977, -77.0366) # lat, long
-dat <- subset(dat, (abs(home_latitude - white_house[[1]]) < 3.0 & 
-             abs(home_longitude - white_house[[2]]) < 3.0) |
-            (abs(work_latitude - white_house[[1]]) < 3.0 & 
-             abs(work_longitude - white_house[[2]]) < 3.0))
+dat <- subset(dat, (abs(home_latitude - white_house[[1]]) < 2.0 & 
+             abs(home_longitude - white_house[[2]]) < 2.0) |
+            (abs(work_latitude - white_house[[1]]) < 2.0 & 
+             abs(work_longitude - white_house[[2]]) < 2.0))
 dat <- subset(dat, !is.na(home_latitude))
 
 dat <- tbl_df(dat)
@@ -148,21 +161,24 @@ with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_
 ```
 
 How'd He Do That?!
+==================
+
+How'd He Do That?!
 ------------------
 
 R logo
 
 - `rmarkdown` -- alternate text and code in one document
 - `ioslides` -- HTML5 slide shows
-- `rCharts` -- create web-based charts in R
-- `Leaflet` -- Javascript map using OpenStreetMap
+- `rCharts` -- create web-based charts and maps in R
+- `Leaflet` -- Javascript map library using OpenStreetMap
 
-Goal
+Task
 ----
 
 - Find a spot on the map
 - (or maybe more than one)
-- that makes all those orange lines happy
+- that makes those orange lines happy
 
 Location Optimization
 =====================
@@ -295,13 +311,13 @@ Location Optimization Applications
 - Crab pots
 - Video surveillance cameras
 - **Gas stations vs. Electric charging stations**
-- McDonald’s
+- McDonald’s franchises
 - Data centers
 - Bicycle sharing system (Capital Bikeshare)
 - Mosquito abatement
 - Sensor placement on robotics 
 
-Back to Meetups
+Back to Meetups!
 ===============
 
 Cost Functions
@@ -311,31 +327,160 @@ __How good is a particular venue/location?__
 
 - Work Distance
 
-$\vert x_{venue} - x_{work} \vert + \vert y_{venue} - y_{work} \vert$
+$\big\vert x_{venue} - x_{work} \big\vert + \big\vert y_{venue} - y_{work} \big\vert$
 
 - Commute Distance
 
 $\min(\text{work distance}, \text{home distance}, \text{tangent distance})$
 
-**Inkscape illustration here**
+<img src="commute-distance1.png" height="130px"/>
+
+Cost Functions
+--------------
+
+__How good is a particular venue/location?__
+
+- Work Distance
+
+$\big\vert x_{venue} - x_{work} \big\vert + \big\vert y_{venue} - y_{work} \big\vert$
+
+- Commute Distance
+
+$\min(\text{work distance}, \text{home distance}, \text{tangent distance})$
+
+<img src="commute-distance2.png" height="180px"/>
 
 Cost Function R Code
 --------------------
 
-here
+```{r costfn-private}
+# p-norm computation. p = 2 is euclidean
+dist <- function(a,b,c,d, p=2) {
+    (abs(a-b)^p + abs(c-d)^p)^(1/p)
+}
 
+# wrapper function for convenience
+p2ls_cost <- function(df, lon, lat) {
+    sum(p2ls_cost_v(df, c("home_longitude", "home_latitude", "work_longitude", "work_latitude"), lon, lat))
+}
+
+```
+<small>
+```{r costfn-public, echo=TRUE}
+# http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+p2ls_cost_v <- function(df, cols, lon, lat, km_per_degree=69.11) {
+    # convert from lat/lon to flat coordinates, using the lat/lon ratio at the point in question
+    param_x = lon * km_per_degree * cos(lat)
+    param_y = lat * km_per_degree
+    home_x = df[[cols[[1]]]] * km_per_degree * cos(lat); home_y = df[[cols[[2]]]] * km_per_degree
+    work_x = df[[cols[[3]]]] * km_per_degree * cos(lat); work_y = df[[cols[[4]]]] * km_per_degree
+    
+    # get the home distances; used if there's no work distance
+    home_dists <- dist(home_x, param_x, home_y, param_y)
+    
+    # then, get the distances to the line segment, which may be NA
+    # length of the segment (squared)
+    l2 <- (home_x - work_x)^2 + (home_y - work_y)^2
+    # t is the position of closest point on segment, with endpoints 0 and 1
+    t <- (param_x - home_x) * (work_x - home_x) + 
+         (param_y - home_y) * (work_y - home_y)
+    t <- t / l2
+    proj_x <- home_x + t * (work_x - home_x)
+    proj_y <- home_y + t * (work_y - home_y)
+    seg_dists <- ifelse(t < 0, 
+                        home_dists,
+                        ifelse(t > 1,
+                               dist(work_x, param_x, work_y, param_y),
+                               dist(proj_x, param_x, proj_y, param_y)))
+
+    ifelse(is.na(seg_dists), home_dists, seg_dists)
+}
+
+```
+</small>
 
 Mapping R Code (tangent)
 --------------
 
-here
+<small>
+```{r map_commutes2, echo=TRUE, eval=FALSE}
+# slightly simplified
+mk_commuteline <- function(lat1, lon1, lat2, lon2) {
+    list(type='Feature',
+         geometry=list(type='LineString', coordinates=list(c(lon1, lat1), c(lon2, lat2))))
+}
 
-change slide background?
+plot_with_linesegs <- function (lat1, lon1, lat2, lon2, center=white_house, fn=mk_commuteline) {
+  map <- Leaflet$new()
+  map$setView(center, zoom = 10)
+  map$tileLayer(provider = 'Stamen.Toner')
+  
+  commute_lines <- lapply(seq_along(lat1), function(i) fn(lat1[[i]], lon1[[i]],
+                                                         lat2[[i]], lon2[[i]]))
+  map$geoJson(commute_lines, style=list(color="#ff5800", weight=5, opacity=0.65))
+  
+  map
+}
 
-Placing Venues on the Map
--------------------------
+with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))
+```
+</small>
 
-show how to compute costs of various peoples' work places, and map
+Placing Workplaces on the Map
+-----------------------------
+
+```{r work_costs, echo=TRUE}
+work_locs <- unique(select(dat, work_longitude, work_latitude)) %>%
+    filter(!is.na(work_longitude))
+names(work_locs) <- c('lon', 'lat')
+
+work_locs <- adply(work_locs, 1, 
+              function(rr) data.frame(cost=p2ls_cost(dat, rr$lon, rr$lat)))
+work_locs$goodness <- 1-(work_locs$cost / max(work_locs$cost))
+```
+
+Placing Workplaces on the Map
+-----------------------------
+
+```{r plotcircles}
+mk_circle <- function(lat, lon, color) {
+    list(type='Feature',
+         properties=list(color='black', fillColor=mnsl(sprintf("5R %d/10", color), fix=TRUE)),
+         geometry=list(type='Point', coordinates=c(lon, lat)))
+}
+
+plot_with_circles <- function(latloncost, center=white_house, zoomlevel=10) {
+  map <- Leaflet$new()
+  map$setView(center, zoom = zoomlevel)
+  map$tileLayer(provider = 'Stamen.Toner')
+  
+  latloncost$cost_color <- if (length(unique(latloncost$cost)) == 1) {
+      5
+  } else {
+      with(latloncost, round(9*((cost-min(cost))/(max(cost)-min(cost)))^(1/4)))
+  }
+  markers <- dlply(latloncost, 1, function(row) with(row, mk_circle(lat, lon, cost_color)))
+  names(markers) <- NULL # so converter creates a list
+  map$geoJson(markers,
+      pointToLayer='#! function (feature, latlng) {
+          return L.circleMarker(latlng, {
+      radius: 10,
+      color: feature.properties.color,
+      fillColor: feature.properties.fillColor,
+      weight: 1,
+      opacity: 0,
+      fillOpacity: 0.9
+  });
+      } !#')
+     
+  map
+
+}
+```
+
+```{r plotwork}
+plot_with_circles(work_locs, zoom=11)
+```
 
 We Want the Best!
 ================
@@ -345,17 +490,36 @@ We Want the Best!
 Optimization
 ------------
 
-say something about Nelder-Mead?
+![Nelder-Mead/Simplex Optimization](neldermeadsteps.gif)
+
+Nelder-Mead/Simplex Optimization
+
+* gradient-free, heuristic nonlinear optimization
+* not the state of the art, but good enough
+* this problem is actually convex; could solve it much faster
 
 Optimization in R
 -----------------
 
-code
+```{r opt1, echo=TRUE, results='markup'}
+p2ls_cost_opt <- function(params) {
+    p2ls_cost(dat, params[[2]], params[[1]]) # lon then lat...
+}
+
+best_point <- optim(white_house, p2ls_cost_opt, control=list(trace=1))
+
+```
 
 Winner!
 -------
 
-map
+```{r opt1_plot}
+plot_with_circles(data.frame(lat=best_point$par[[1]], lon=best_point$par[[2]], cost=0),
+                  zoom=14)
+
+```
+
+**1225 Connecticut Ave NW**
 
 But
 ===
@@ -363,7 +527,11 @@ But
 Think of the Children...
 ------------------------
 
-in Fairfax County
+```{r opt1_plot_big}
+with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))
+```
+
+in Fairfax County...
 
 Three-Location Optimum
 ----------------------
