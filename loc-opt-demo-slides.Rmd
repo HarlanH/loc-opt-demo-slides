@@ -65,8 +65,10 @@ Problem
 
 ![Data Science DC Logo](DSDClogo2014_tr_400square.png)
 
-- 4000+ members; 150-250 attendees
-- **Where??**
+> - Meetup.com -- grass-roots professional communities
+> - 4000+ members; 150-250 attendees
+> - Part of Data Community DC umbrella
+> - **Where??**
 
 Budget
 ------
@@ -478,7 +480,7 @@ plot_with_circles <- function(latloncost, center=white_house, zoomlevel=10) {
 }
 ```
 
-```{r plotwork}
+```{r plotwork, results='asis'}
 plot_with_circles(work_locs, zoom=11)
 ```
 
@@ -498,9 +500,9 @@ Nelder-Mead/Simplex Optimization
 * not the state of the art, but good enough
 * this problem is actually convex; could solve it much faster
 
-Optimization in R
+Optimization in R 
 -----------------
-
+<!-- TODO: put this in a scrolling div with fixed height -->
 ```{r opt1, echo=TRUE, results='markup'}
 p2ls_cost_opt <- function(params) {
     p2ls_cost(dat, params[[2]], params[[1]]) # lon then lat...
@@ -513,7 +515,7 @@ best_point <- optim(white_house, p2ls_cost_opt, control=list(trace=1))
 Winner!
 -------
 
-```{r opt1_plot}
+```{r opt1_plot, results='asis'}
 plot_with_circles(data.frame(lat=best_point$par[[1]], lon=best_point$par[[2]], cost=0),
                   zoom=14)
 
@@ -524,14 +526,21 @@ plot_with_circles(data.frame(lat=best_point$par[[1]], lon=best_point$par[[2]], c
 But
 ===
 
-Think of the Children...
+Think of the Children...|in Fairfax County...
 ------------------------
 
-```{r opt1_plot_big}
+```{r opt1_plot_big, results='asis'}
 with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))
 ```
 
-in Fairfax County...
+Three-Location Optimum
+----------------------
+
+Goal:
+
+> - Make everyone happy,
+> - at least some of the time,
+> - by rotating among several venues.
 
 Three-Location Optimum
 ----------------------
@@ -542,45 +551,100 @@ Goal:
 - at least some of the time,
 - by rotating among several venues.
 
-Mini-min cost formula:
+_Mini-min_ cost formula:
 
-$\min_{v \in 1,2,3} \min_{x_v,y_v} C(x_v, y_v, \text{commutes})$
+<!-- $\min_{v \in 1,2,3} \min_{x_v,y_v} C(x_v, y_v, \text{commutes})$ -->
 
-(6 parameters)
+$$ \operatorname{cost} = \sum_{\operatorname{person}} min_{\operatorname{loc}_i} d(\operatorname{loc}_i, \operatorname{commute}_{\operatorname{person}}) $$
+
+(6 parameters vs. 2)
 
 Problem | Optimization
 ---------------------
 
-One-location problem is __convex__
+<img src="convex.jpg"/>
 
-picture
+One-location problem is __convex__.
 
-Three-location problem isn't -- "OR" in cost formula is a discontinuity.
+Three-location problem isn't -- discrete `min` in cost formula is a discontinuity.
 
 Solution | Global Optimization
 -----------------------------
 
-+ a.k.a. "Computing Power is Cheap"
+<div class="columns-2">
+> + a.k.a. "Computing Power is Cheap"
 
-+ Using `DEoptim` -- Directed Evolution
+> + Using `DEoptim` -- Directed Evolution
 
-+ Handwavy-explanation
+> + Handwavy-explanation
     - Have a __population__ of candidate solutions
     - Combine pairs, extrapolating in promising directions
     - Randomly combine other pairs
     - Evaluate the cost function, taking the best
     - Repeat until done (bored)
 
+<img src="DE_1.png"/>
+
+</div>
+
+<!-- http://www.klopfenstein.net/lorenz.aspx/genetic-algorithms -->
+
 Best Three Meetup Locations
 ---------------------------
 
-map!
+```{r threelocfns}
+colnames <- c("home_longitude", "home_latitude",
+          "work_longitude", "work_latitude")
+p2lsN_cost <- function(dat, latlons) {
+    # for each pair of latlons, calc p2ls_cost
+    costs <- laply(1:(length(latlons)/2), 
+                   function(i) p2ls_cost_v(dat, 
+                                               colnames, 
+                                               latlons[[i*2-1]], latlons[[i*2]]))
+    sum(aaply(costs, 2, min))
+}
+#p2lsN_cost.o <- cmpfun(p2lsN_cost)
+p2lsN_cost_opt <- function(latlons) {
+    p2lsN_cost(dat, latlons)
+}
 
-Thank You
-=========
+```
 
-links to slides
+```{r threeloc, cache=TRUE}
+# constrain the points to be not too far from DC (Manassas to B'more, roughly)
+lower_box <- rep(c(38.693408, -77.448911), 3)
+upper_box <- rep(c(39.284748, -76.668881), 3)
 
-Meetup tonight
+three_loc_de <- DEoptim(p2lsN_cost_opt, lower=lower_box, upper=upper_box,
+                     control=list(trace=TRUE, NP=150, itermax=100, c=.1, strategy=3))
+```
 
-contact info
+```{r threelocmap, cache=TRUE, dependson='threeloc'}
+plot_with_circles(data.frame(lat=three_loc_de$optim$bestmem[c(2,4,6)], 
+                             lon=three_loc_de$optim$bestmem[c(1,3,5)], cost=0),
+                  zoom=10)
+```
+
+> - 18th and I (not far from GWU)
+> - Walter Reed
+> - Montgomory Cty Fairgrounds
+
+Concluding Thoughts
+-------------------
+
+* _You_ can do more than ever.
+* _Community_ of people and tools.
+* _Mix Things Up_.
+
+Four Things
+-----------
+
+> * Slides are here: @@@
+
+> * Come to Data Science DC! Tonight! 7pm! Lightning talks!
+
+> * `harlan@datacommunitydc.org`  `@harlanh`
+
+Thanks!
+=======
+
