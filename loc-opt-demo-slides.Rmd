@@ -8,6 +8,7 @@ output:
     incremental: false
     transition: faster
     fig_height: 4
+    css: styles.css
 ---
 
 
@@ -56,18 +57,21 @@ Misnomer
 Themes
 ------
 
-- 80/20 is **Cheap**
-- Open Source, Modern Tools are **Powerful**
-- **Optimization** is a key tool of Data Science (& Operations Research)
+> - 80/20 is **Cheap**
+> - Open Source, Modern Tools are **Powerful**
+> - **Optimization** is a key tool of Data Science (& Operations Research)
 
 Problem
 =======
 
-![Data Science DC Logo](DSDClogo2014_tr_400square.png)
+Problem
+-------
 
-> - Meetup.com -- grass-roots professional communities
+<img src="DSDClogo2014_tr_400square.png" height="250px"/>
+
+> - [Meetup.com](http://meetup.com) -- grass-roots professional communities
 > - 4000+ members; 150-250 attendees
-> - Part of Data Community DC umbrella
+> - Part of [Data Community DC](http://datacommunitydc.org) umbrella
 > - **Where??**
 
 Budget
@@ -168,7 +172,7 @@ How'd He Do That?!
 How'd He Do That?!
 ------------------
 
-R logo
+<img src="Rlogo-2.png" height="150px"/>
 
 - `rmarkdown` -- alternate text and code in one document
 - `ioslides` -- HTML5 slide shows
@@ -176,11 +180,16 @@ R logo
 - `Leaflet` -- Javascript map library using OpenStreetMap
 
 Task
+====
+
+Task
 ----
 
-- Find a spot on the map
-- (or maybe more than one)
-- that makes those orange lines happy
+> - Find a spot on the map,
+
+> - (or maybe more than one),
+
+> - that makes those orange lines happy
 
 Location Optimization
 =====================
@@ -258,7 +267,7 @@ tbl2circlemap(qq)
 
 ```
 
-Alice works in DC; Bob works in Baltimore, but has to make two round-trips per day. 
+Alice works in DC; Bob works in Baltimore,<br>_but has to make two round-trips per day_. 
 
 Where should Alice and Bob live?
 
@@ -329,11 +338,24 @@ __How good is a particular venue/location?__
 
 - Work Distance
 
-$\big\vert x_{venue} - x_{work} \big\vert + \big\vert y_{venue} - y_{work} \big\vert$
+$C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert$
 
 - Commute Distance
 
-$\min(\text{work distance}, \text{home distance}, \text{tangent distance})$
+$C = \min(\text{work distance}, \text{home distance}, \text{tangent distance})$
+
+Cost Functions
+--------------
+
+__How good is a particular venue/location?__
+
+- Work Distance
+
+$C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert$
+
+- Commute Distance
+
+$C = \min(\text{work distance}, \text{home distance}, \text{tangent distance})$
 
 <img src="commute-distance1.png" height="130px"/>
 
@@ -344,11 +366,11 @@ __How good is a particular venue/location?__
 
 - Work Distance
 
-$\big\vert x_{venue} - x_{work} \big\vert + \big\vert y_{venue} - y_{work} \big\vert$
+$C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert$
 
 - Commute Distance
 
-$\min(\text{work distance}, \text{home distance}, \text{tangent distance})$
+$C = \min(\text{work distance}, \text{home distance}, \text{tangent distance})$
 
 <img src="commute-distance2.png" height="180px"/>
 
@@ -367,6 +389,7 @@ p2ls_cost <- function(df, lon, lat) {
 }
 
 ```
+<div class="scrollbox">
 <small>
 ```{r costfn-public, echo=TRUE}
 # http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
@@ -374,8 +397,10 @@ p2ls_cost_v <- function(df, cols, lon, lat, km_per_degree=69.11) {
     # convert from lat/lon to flat coordinates, using the lat/lon ratio at the point in question
     param_x = lon * km_per_degree * cos(lat)
     param_y = lat * km_per_degree
-    home_x = df[[cols[[1]]]] * km_per_degree * cos(lat); home_y = df[[cols[[2]]]] * km_per_degree
-    work_x = df[[cols[[3]]]] * km_per_degree * cos(lat); work_y = df[[cols[[4]]]] * km_per_degree
+    home_x = df[[cols[[1]]]] * km_per_degree * cos(lat)
+    home_y = df[[cols[[2]]]] * km_per_degree
+    work_x = df[[cols[[3]]]] * km_per_degree * cos(lat)
+    work_y = df[[cols[[4]]]] * km_per_degree
     
     # get the home distances; used if there's no work distance
     home_dists <- dist(home_x, param_x, home_y, param_y)
@@ -400,10 +425,12 @@ p2ls_cost_v <- function(df, cols, lon, lat, km_per_degree=69.11) {
 
 ```
 </small>
+</div>
 
 Mapping R Code (tangent)
 --------------
 
+<div class="scrollbox">
 <small>
 ```{r map_commutes2, echo=TRUE, eval=FALSE}
 # slightly simplified
@@ -427,6 +454,7 @@ plot_with_linesegs <- function (lat1, lon1, lat2, lon2, center=white_house, fn=m
 with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))
 ```
 </small>
+</div>
 
 Placing Workplaces on the Map
 -----------------------------
@@ -436,8 +464,10 @@ work_locs <- unique(select(dat, work_longitude, work_latitude)) %>%
     filter(!is.na(work_longitude))
 names(work_locs) <- c('lon', 'lat')
 
+### <b>
 work_locs <- adply(work_locs, 1, 
               function(rr) data.frame(cost=p2ls_cost(dat, rr$lon, rr$lat)))
+### </b>
 work_locs$goodness <- 1-(work_locs$cost / max(work_locs$cost))
 ```
 
@@ -502,7 +532,7 @@ Nelder-Mead/Simplex Optimization
 
 Optimization in R 
 -----------------
-<!-- TODO: put this in a scrolling div with fixed height -->
+<div class="scrollbox">
 ```{r opt1, echo=TRUE, results='markup'}
 p2ls_cost_opt <- function(params) {
     p2ls_cost(dat, params[[2]], params[[1]]) # lon then lat...
@@ -511,6 +541,7 @@ p2ls_cost_opt <- function(params) {
 best_point <- optim(white_house, p2ls_cost_opt, control=list(trace=1))
 
 ```
+</div>
 
 Winner!
 -------
@@ -526,7 +557,7 @@ plot_with_circles(data.frame(lat=best_point$par[[1]], lon=best_point$par[[2]], c
 But
 ===
 
-Think of the Children...|in Fairfax County...
+Think of the Children...|in Montgomery County...
 ------------------------
 
 ```{r opt1_plot_big, results='asis'}
@@ -592,7 +623,8 @@ Solution | Global Optimization
 Best Three Meetup Locations
 ---------------------------
 
-```{r threelocfns}
+<div class="scrollbox">
+```{r threelocfns, echo=TRUE}
 colnames <- c("home_longitude", "home_latitude",
           "work_longitude", "work_latitude")
 p2lsN_cost <- function(dat, latlons) {
@@ -601,14 +633,19 @@ p2lsN_cost <- function(dat, latlons) {
                    function(i) p2ls_cost_v(dat, 
                                                colnames, 
                                                latlons[[i*2-1]], latlons[[i*2]]))
+    ### <b>
     sum(aaply(costs, 2, min))
+    ### </b>
 }
-#p2lsN_cost.o <- cmpfun(p2lsN_cost)
 p2lsN_cost_opt <- function(latlons) {
     p2lsN_cost(dat, latlons)
 }
 
 ```
+</div>
+
+Best Three Meetup Locations
+---------------------------
 
 ```{r threeloc, cache=TRUE}
 # constrain the points to be not too far from DC (Manassas to B'more, roughly)
@@ -619,7 +656,7 @@ three_loc_de <- DEoptim(p2lsN_cost_opt, lower=lower_box, upper=upper_box,
                      control=list(trace=TRUE, NP=150, itermax=100, c=.1, strategy=3))
 ```
 
-```{r threelocmap, cache=TRUE, dependson='threeloc'}
+```{r threelocmap, cache=TRUE, dependson='threeloc', results='asis'}
 plot_with_circles(data.frame(lat=three_loc_de$optim$bestmem[c(2,4,6)], 
                              lon=three_loc_de$optim$bestmem[c(1,3,5)], cost=0),
                   zoom=10)
@@ -645,6 +682,5 @@ Four Things
 
 > * `harlan@datacommunitydc.org`  `@harlanh`
 
-Thanks!
-=======
+> * **Thanks!**
 
