@@ -2,3 +2,12 @@
     height: 450px;
     overflow: scroll
 }
+
+.prettyprint {
+    font-size: 80%;
+    line-height: 120%;
+}
+
+h3 {
+    font-size: 40px;
+}

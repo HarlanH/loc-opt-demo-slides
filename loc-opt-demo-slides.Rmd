@@ -9,6 +9,8 @@ output:
     transition: faster
     fig_height: 4
     css: styles.css
+    mathjax: local
+    self_contained: false
 ---
 
 
@@ -59,7 +61,7 @@ Themes
 
 > - 80/20 is **Cheap**
 > - Open Source, Modern Tools are **Powerful**
-> - **Optimization** is a key tool of Data Science (& Operations Research)
+> - **Optimization** is a key tool of Data Science<br>(& Operations Research)
 
 Problem
 =======
@@ -338,11 +340,11 @@ __How good is a particular venue/location?__
 
 - Work Distance
 
-$C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert$
+$$ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert $$
 
 - Commute Distance
 
-$C = \min(\text{work distance}, \text{home distance}, \text{tangent distance})$
+$$ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) $$
 
 Cost Functions
 --------------
@@ -351,11 +353,11 @@ __How good is a particular venue/location?__
 
 - Work Distance
 
-$C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert$
+$$ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert $$
 
 - Commute Distance
 
-$C = \min(\text{work distance}, \text{home distance}, \text{tangent distance})$
+$$ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) $$
 
 <img src="commute-distance1.png" height="130px"/>
 
@@ -366,11 +368,11 @@ __How good is a particular venue/location?__
 
 - Work Distance
 
-$C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert$
+$$ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert $$
 
 - Commute Distance
 
-$C = \min(\text{work distance}, \text{home distance}, \text{tangent distance})$
+$$ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) $$
 
 <img src="commute-distance2.png" height="180px"/>
 
@@ -394,7 +396,8 @@ p2ls_cost <- function(df, lon, lat) {
 ```{r costfn-public, echo=TRUE}
 # http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 p2ls_cost_v <- function(df, cols, lon, lat, km_per_degree=69.11) {
-    # convert from lat/lon to flat coordinates, using the lat/lon ratio at the point in question
+    # convert from lat/lon to flat coordinates, using the lat/lon 
+    # ratio at the point in question
     param_x = lon * km_per_degree * cos(lat)
     param_y = lat * km_per_degree
     home_x = df[[cols[[1]]]] * km_per_degree * cos(lat)
@@ -414,12 +417,13 @@ p2ls_cost_v <- function(df, cols, lon, lat, km_per_degree=69.11) {
     t <- t / l2
     proj_x <- home_x + t * (work_x - home_x)
     proj_y <- home_y + t * (work_y - home_y)
+    ### <b>
     seg_dists <- ifelse(t < 0, 
                         home_dists,
                         ifelse(t > 1,
                                dist(work_x, param_x, work_y, param_y),
                                dist(proj_x, param_x, proj_y, param_y)))
-
+    ### </b>
     ifelse(is.na(seg_dists), home_dists, seg_dists)
 }
 
@@ -436,19 +440,24 @@ Mapping R Code (tangent)
 # slightly simplified
 mk_commuteline <- function(lat1, lon1, lat2, lon2) {
     list(type='Feature',
-         geometry=list(type='LineString', coordinates=list(c(lon1, lat1), c(lon2, lat2))))
+         geometry=list(type='LineString', 
+                       coordinates=list(c(lon1, lat1), c(lon2, lat2))))
 }
 
-plot_with_linesegs <- function (lat1, lon1, lat2, lon2, center=white_house, fn=mk_commuteline) {
-  map <- Leaflet$new()
-  map$setView(center, zoom = 10)
-  map$tileLayer(provider = 'Stamen.Toner')
-  
-  commute_lines <- lapply(seq_along(lat1), function(i) fn(lat1[[i]], lon1[[i]],
-                                                         lat2[[i]], lon2[[i]]))
-  map$geoJson(commute_lines, style=list(color="#ff5800", weight=5, opacity=0.65))
-  
-  map
+plot_with_linesegs <- function (lat1, lon1, lat2, lon2, 
+                                center=white_house, fn=mk_commuteline) {
+    ### <b>
+    map <- Leaflet$new()
+    map$setView(center, zoom = 10)
+    map$tileLayer(provider = 'Stamen.Toner')
+    
+    commute_lines <- lapply(seq_along(lat1), 
+                          function(i) fn(lat1[[i]], lon1[[i]],
+                                         lat2[[i]], lon2[[i]]))
+    map$geoJson(commute_lines, 
+              style=list(color="#ff5800", weight=5, opacity=0.65))
+    ### </b>
+    map
 }
 
 with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))
@@ -466,7 +475,7 @@ names(work_locs) <- c('lon', 'lat')
 
 ### <b>
 work_locs <- adply(work_locs, 1, 
-              function(rr) data.frame(cost=p2ls_cost(dat, rr$lon, rr$lat)))
+  function(rr) data.frame(cost=p2ls_cost(dat, rr$lon, rr$lat)))
 ### </b>
 work_locs$goodness <- 1-(work_locs$cost / max(work_locs$cost))
 ```
@@ -514,17 +523,13 @@ plot_with_circles <- function(latloncost, center=white_house, zoomlevel=10) {
 plot_with_circles(work_locs, zoom=11)
 ```
 
-We Want the Best!
+We Want the Best! | (ignoring roads, rivers, subways, traffic...)
 ================
 
-(ignoring roads, rivers, subways, traffic...)
-
-Optimization
+Optimization -- Nelder-Mead/Simplex
 ------------
 
-![Nelder-Mead/Simplex Optimization](neldermeadsteps.gif)
-
-Nelder-Mead/Simplex Optimization
+<img src="neldermeadsteps.gif" height="350px"/>
 
 * gradient-free, heuristic nonlinear optimization
 * not the state of the art, but good enough
@@ -538,7 +543,9 @@ p2ls_cost_opt <- function(params) {
     p2ls_cost(dat, params[[2]], params[[1]]) # lon then lat...
 }
 
-best_point <- optim(white_house, p2ls_cost_opt, control=list(trace=1))
+best_point <- optim(white_house, 
+                    p2ls_cost_opt, 
+                    control=list(trace=1))
 
 ```
 </div>
@@ -603,6 +610,8 @@ Solution | Global Optimization
 -----------------------------
 
 <div class="columns-2">
+<img src="DE_1.png" height="200px"/>
+
 > + a.k.a. "Computing Power is Cheap"
 
 > + Using `DEoptim` -- Directed Evolution
@@ -613,9 +622,7 @@ Solution | Global Optimization
     - Randomly combine other pairs
     - Evaluate the cost function, taking the best
     - Repeat until done (bored)
-
-<img src="DE_1.png"/>
-
+    
 </div>
 
 <!-- http://www.klopfenstein.net/lorenz.aspx/genetic-algorithms -->
@@ -631,8 +638,9 @@ p2lsN_cost <- function(dat, latlons) {
     # for each pair of latlons, calc p2ls_cost
     costs <- laply(1:(length(latlons)/2), 
                    function(i) p2ls_cost_v(dat, 
-                                               colnames, 
-                                               latlons[[i*2-1]], latlons[[i*2]]))
+                                           colnames, 
+                                           lat=latlons[[i*2-1]], 
+                                           lon=latlons[[i*2]]))
     ### <b>
     sum(aaply(costs, 2, min))
     ### </b>
@@ -657,30 +665,34 @@ three_loc_de <- DEoptim(p2lsN_cost_opt, lower=lower_box, upper=upper_box,
 ```
 
 ```{r threelocmap, cache=TRUE, dependson='threeloc', results='asis'}
-plot_with_circles(data.frame(lat=three_loc_de$optim$bestmem[c(2,4,6)], 
-                             lon=three_loc_de$optim$bestmem[c(1,3,5)], cost=0),
-                  zoom=10)
+threelocdf <- data.frame(lat=three_loc_de$optim$bestmem[c(1,3,5)],
+                         lon=three_loc_de$optim$bestmem[c(2,4,6)], 
+                         cost=0)
+#print(threelocdf)
+plot_with_circles(threelocdf, zoom=10)
 ```
 
 > - 18th and I (not far from GWU)
 > - Walter Reed
-> - Montgomory Cty Fairgrounds
+> - somewhere in Maryland
 
 Concluding Thoughts
 -------------------
 
-* _You_ can do more than ever.
-* _Community_ of people and tools.
-* _Mix Things Up_.
+> * _You_ can do more than ever.
 
-Four Things
+> * _Community_ of people and tools.
+
+> * _Prescriptive Analytics_ are powerful, accessible.
+
+Four Final Things
 -----------
 
 > * Slides are here: @@@
 
 > * Come to Data Science DC! Tonight! 7pm! Lightning talks!
 
-> * `harlan@datacommunitydc.org`  `@harlanh`
+> * `harlan@datacommunitydc.org`,  `@harlanh`
 
 > * **Thanks!**
 
