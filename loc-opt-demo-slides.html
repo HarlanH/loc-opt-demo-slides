@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>How to Put Your Meetup on the Map (Literally)</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+  <meta name="date" content="2014-09-15" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <link rel="stylesheet" media="all" href="loc-opt-demo-slides_files/ioslides-13.5.1/fonts/fonts.css">
+
+  <link rel="stylesheet" media="all" href="loc-opt-demo-slides_files/ioslides-13.5.1/theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="loc-opt-demo-slides_files/ioslides-13.5.1/theme/css/phone.css">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'How to Put Your Meetup on the Map (Literally)',
+                        subtitle: 'Predictive Analytics World – Government',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+              },
+
+      // Author information
+      presenters: [
+            {
+        name: 'Harlan D. Harris, Alan Briggs'
+      },
+            ]
+    };
+  </script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.2s ease-in-out;
+      -moz-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.2s;
+      -moz-transition: opacity 0.6s ease-in 0.2s;
+      -o-transition: opacity 0.6s ease-in 0.2s;
+      transition: opacity 0.6s ease-in 0.2s;
+      opacity: 0;
+    }
+
+  </style>
+
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+</head>
+
+<body style="opacity: 0">
+
+<slides>
+
+  <slide class="title-slide segue nobackground">
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">September 15, 2014</p>
+          </hgroup>
+  </slide>
+
+<slide class=''><hgroup><h2>Misnomer</h2></hgroup><article  id="misnomer">
+
+<h3>Predictive Analytics World &#8211; Government</h3>
+
+</article></slide><slide class=''><hgroup><h2>Misnomer</h2></hgroup><article  id="misnomer-1">
+
+<h3><del>Predictive</del> Analytics World &#8211; Government</h3>
+
+<h3>Prescriptive Analytics</h3>
+
+</article></slide><slide class=''><hgroup><h2>Misnomer</h2></hgroup><article  id="misnomer-2">
+
+<h3><del>Predictive</del> Analytics <del>World</del> &#8211; Government</h3>
+
+<h3>Prescriptive Analytics Local</h3>
+
+</article></slide><slide class=''><hgroup><h2>Misnomer</h2></hgroup><article  id="misnomer-3">
+
+<h3><del>Predictive</del> Analytics <del>World</del> &#8211; <del>Government</del></h3>
+
+<h3>Prescriptive Analytics Local &#8211; Community</h3>
+
+</article></slide><slide class=''><hgroup><h2>Themes</h2></hgroup><article  id="themes">
+
+<ul class = 'build'>
+<li>80/20 is <strong>Cheap</strong></li>
+<li>Open Source, Modern Tools are <strong>Powerful</strong></li>
+<li><strong>Optimization</strong> is a key tool of Data Science<br>(&amp; Operations Research)</li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Problem</h2></hgroup><article  id="problem">
+
+</article></slide><slide class=''><hgroup><h2>Problem</h2></hgroup><article  id="problem-1">
+
+<p><img src="DSDClogo2014_tr_400square.png" height="250px"/></p>
+
+<ul class = 'build'>
+<li><a href='http://meetup.com' title=''>Meetup.com</a> &#8211; grass-roots professional communities</li>
+<li>4000+ members; 150-250 attendees</li>
+<li>Part of <a href='http://datacommunitydc.org' title=''>Data Community DC</a> umbrella</li>
+<li><strong>Where??</strong></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Budget</h2></hgroup><article  id="budget">
+
+<ul>
+<li>$0.00</li>
+<li>One half-decent data scientist (me)</li>
+<li>One solid operations researcher (Alan)</li>
+<li>A couple of weekends*</li>
+<li>One Macbook Air</li>
+</ul>
+
+<p><small>* since polished&#8230;</small></p>
+
+</article></slide><slide class=''><hgroup><h2>Data</h2></hgroup><article  id="data">
+
+<ul>
+<li>survey of Meetup members</li>
+<li>~150 respondents</li>
+<li>home and work ZIP codes</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Some Data</h2></hgroup><article  id="some-data">
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left"></th>
+<th align="left">home_zip</th>
+<th align="left">home_city</th>
+<th align="left">home_state</th>
+<th align="right">home_latitude</th>
+<th align="right">home_longitude</th>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">22314</td>
+<td align="left">Alexandria</td>
+<td align="left">VA</td>
+<td align="right">38.81</td>
+<td align="right">-77.05</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">22202</td>
+<td align="left">Arlington</td>
+<td align="left">VA</td>
+<td align="right">38.86</td>
+<td align="right">-77.06</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">20036</td>
+<td align="left">Washington</td>
+<td align="left">DC</td>
+<td align="right">38.91</td>
+<td align="right">-77.04</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="left">20002</td>
+<td align="left">Washington</td>
+<td align="left">DC</td>
+<td align="right">38.90</td>
+<td align="right">-76.99</td>
+</tr>
+<tr class="odd">
+<td align="left">6</td>
+<td align="left">20001</td>
+<td align="left">Washington</td>
+<td align="left">DC</td>
+<td align="right">38.91</td>
+<td align="right">-77.02</td>
+</tr>
+</table>
+
+</article></slide><slide class=''><hgroup><h2>Some Data</h2></hgroup><article  id="some-data-1">
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left"></th>
+<th align="left">work_zip</th>
+<th align="left">work_city</th>
+<th align="left">work_state</th>
+<th align="right">work_latitude</th>
+<th align="right">work_longitude</th>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">20230</td>
+<td align="left">Washington</td>
+<td align="left">DC</td>
+<td align="right">38.89</td>
+<td align="right">-77.01</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">22202</td>
+<td align="left">Arlington</td>
+<td align="left">VA</td>
+<td align="right">38.86</td>
+<td align="right">-77.06</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">20024</td>
+<td align="left">Washington</td>
+<td align="left">DC</td>
+<td align="right">38.88</td>
+<td align="right">-77.02</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="left">20005</td>
+<td align="left">Washington</td>
+<td align="left">DC</td>
+<td align="right">38.90</td>
+<td align="right">-77.03</td>
+</tr>
+<tr class="odd">
+<td align="left">6</td>
+<td align="left">22102</td>
+<td align="left">McLean</td>
+<td align="left">VA</td>
+<td align="right">38.94</td>
+<td align="right">-77.22</td>
+</tr>
+</table>
+
+</article></slide><slide class=''><hgroup><h2>Let&#39;s See That</h2></hgroup><article  id="lets-see-that">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/map_commutes.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart20b43acbdf98
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>How&#39;d He Do That?!</h2></hgroup><article  id="howd-he-do-that">
+
+</article></slide><slide class=''><hgroup><h2>How&#39;d He Do That?!</h2></hgroup><article  id="howd-he-do-that-1">
+
+<p><img src="Rlogo-2.png" height="150px"/></p>
+
+<ul>
+<li><code>rmarkdown</code> &#8211; alternate text and code in one document</li>
+<li><code>ioslides</code> &#8211; HTML5 slide shows</li>
+<li><code>rCharts</code> &#8211; create web-based charts and maps in R</li>
+<li><code>Leaflet</code> &#8211; Javascript map library using OpenStreetMap</li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Task</h2></hgroup><article  id="task">
+
+</article></slide><slide class=''><hgroup><h2>Task</h2></hgroup><article  id="task-1">
+
+<ul class = 'build'>
+<li>Find a spot on the map,</li>
+</ul>
+
+<ul class = 'build'>
+<li>(or maybe more than one),</li>
+</ul>
+
+<ul class = 'build'>
+<li>that makes those orange lines happy</li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Location Optimization</h2></hgroup><article  id="location-optimization">
+
+</article></slide><slide class=''><hgroup><h2>Simple Example</h2></hgroup><article  id="simple-example">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/dcbalt.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart205c70e6f4ab
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+<p>Alice works in DC; Bob works in Baltimore.</p>
+
+<p>Where should Alice and Bob live?</p>
+
+</article></slide><slide class=''><hgroup><h2>Simple Example</h2></hgroup><article  id="simple-example-1">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/dcbalt2.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart205c4ac94075
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+<p>Sure.</p>
+
+</article></slide><slide class=''><hgroup><h2>But What If?</h2></hgroup><article  id="but-what-if">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/dcbalt3.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart205c62a6e7ae
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+<p>Alice works in DC; Bob works in Baltimore,<br><em>but has to make two round-trips per day</em>.</p>
+
+<p>Where should Alice and Bob live?</p>
+
+</article></slide><slide class=''><hgroup><h2>But What If?</h2></hgroup><article  id="but-what-if-1">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/dcbalt4.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart2088463e3236
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+<p>Jessup = \(2/3 + 2/3 + 1/3 + 1/3 + 1/3 + 1/3 = 2~2/3\)</p>
+
+<p>Baltimore = \(1 + 1 + 0 + 0 + 0 + 0 = 2\)</p>
+
+</article></slide><slide class=''><hgroup><h2>Location Optimization</h2></hgroup><article  id="location-optimization-1">
+
+<div class="columns-2">
+<ul>
+<li>Fermat-Weber</li>
+</ul>
+
+<p><img src="fermatweber.jpg" height="130px"/></p>
+
+<ul>
+<li>Continuous / Discrete</li>
+</ul>
+
+<p><img src="ContDisc.png" height="130px"/></p>
+
+<ul>
+<li>Single / Multiple Location</li>
+</ul>
+
+<p><img src="SingMult.png" height="130px"/></p>
+
+<ul>
+<li>Capacitated / Uncapacitated</li>
+</ul>
+
+<p><img src="Capac.png" height="130px"/></p></div>
+
+</article></slide><slide class=''><hgroup><h2>Location Optimization Applications</h2></hgroup><article  id="location-optimization-applications">
+
+<ul>
+<li>Employee location at UPS</li>
+<li><strong>IKEA (inventory costs)</strong></li>
+<li>Crab pots</li>
+<li>Video surveillance cameras</li>
+<li><strong>Gas stations vs. Electric charging stations</strong></li>
+<li>McDonald’s franchises</li>
+<li>Data centers</li>
+<li>Bicycle sharing system (Capital Bikeshare)</li>
+<li>Mosquito abatement</li>
+<li>Sensor placement on robotics</li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Back to Meetups!</h2></hgroup><article  id="back-to-meetups">
+
+</article></slide><slide class=''><hgroup><h2>Cost Functions</h2></hgroup><article  id="cost-functions">
+
+<p><strong>How good is a particular venue/location?</strong></p>
+
+<ul>
+<li>Work Distance</li>
+</ul>
+
+<p>\[ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert \]</p>
+
+<ul>
+<li>Commute Distance</li>
+</ul>
+
+<p>\[ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) \]</p>
+
+</article></slide><slide class=''><hgroup><h2>Cost Functions</h2></hgroup><article  id="cost-functions-1">
+
+<p><strong>How good is a particular venue/location?</strong></p>
+
+<ul>
+<li>Work Distance</li>
+</ul>
+
+<p>\[ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert \]</p>
+
+<ul>
+<li>Commute Distance</li>
+</ul>
+
+<p>\[ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) \]</p>
+
+<p><img src="commute-distance1.png" height="130px"/></p>
+
+</article></slide><slide class=''><hgroup><h2>Cost Functions</h2></hgroup><article  id="cost-functions-2">
+
+<p><strong>How good is a particular venue/location?</strong></p>
+
+<ul>
+<li>Work Distance</li>
+</ul>
+
+<p>\[ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert \]</p>
+
+<ul>
+<li>Commute Distance</li>
+</ul>
+
+<p>\[ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) \]</p>
+
+<p><img src="commute-distance2.png" height="180px"/></p>
+
+</article></slide><slide class=''><hgroup><h2>Cost Function R Code</h2></hgroup><article  id="cost-function-r-code">
+
+<div class="scrollbox">
+<p><small></p>
+
+<pre class = 'prettyprint lang-r'># http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+p2ls_cost_v &lt;- function(df, cols, lon, lat, km_per_degree=69.11) {
+    # convert from lat/lon to flat coordinates, using the lat/lon 
+    # ratio at the point in question
+    param_x = lon * km_per_degree * cos(lat)
+    param_y = lat * km_per_degree
+    home_x = df[[cols[[1]]]] * km_per_degree * cos(lat)
+    home_y = df[[cols[[2]]]] * km_per_degree
+    work_x = df[[cols[[3]]]] * km_per_degree * cos(lat)
+    work_y = df[[cols[[4]]]] * km_per_degree
+    
+    # get the home distances; used if there&#39;s no work distance
+    home_dists &lt;- dist(home_x, param_x, home_y, param_y)
+    
+    # then, get the distances to the line segment, which may be NA
+    # length of the segment (squared)
+    l2 &lt;- (home_x - work_x)^2 + (home_y - work_y)^2
+    # t is the position of closest point on segment, with endpoints 0 and 1
+    t &lt;- (param_x - home_x) * (work_x - home_x) + 
+         (param_y - home_y) * (work_y - home_y)
+    t &lt;- t / l2
+    proj_x &lt;- home_x + t * (work_x - home_x)
+    proj_y &lt;- home_y + t * (work_y - home_y)
+<b>    seg_dists &lt;- ifelse(t &lt; 0, 
+                        home_dists,
+                        ifelse(t &gt; 1,
+                               dist(work_x, param_x, work_y, param_y),
+                               dist(proj_x, param_x, proj_y, param_y)))
+</b>    ifelse(is.na(seg_dists), home_dists, seg_dists)
+}</pre>
+
+</small></div>
+
+</article></slide><slide class=''><hgroup><h2>Mapping R Code (tangent)</h2></hgroup><article  id="mapping-r-code-tangent">
+
+<div class="scrollbox">
+<p><small></p>
+
+<pre class = 'prettyprint lang-r'># slightly simplified
+mk_commuteline &lt;- function(lat1, lon1, lat2, lon2) {
+    list(type=&#39;Feature&#39;,
+         geometry=list(type=&#39;LineString&#39;, 
+                       coordinates=list(c(lon1, lat1), c(lon2, lat2))))
+}
+
+plot_with_linesegs &lt;- function (lat1, lon1, lat2, lon2, 
+                                center=white_house, fn=mk_commuteline) {
+<b>    map &lt;- Leaflet$new()
+    map$setView(center, zoom = 10)
+    map$tileLayer(provider = &#39;Stamen.Toner&#39;)
+    
+    commute_lines &lt;- lapply(seq_along(lat1), 
+                          function(i) fn(lat1[[i]], lon1[[i]],
+                                         lat2[[i]], lon2[[i]]))
+    map$geoJson(commute_lines, 
+              style=list(color=&quot;#ff5800&quot;, weight=5, opacity=0.65))
+</b>    map
+}
+
+with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))</pre>
+
+</small></div>
+
+</article></slide><slide class=''><hgroup><h2>Placing Workplaces on the Map</h2></hgroup><article  id="placing-workplaces-on-the-map">
+
+<pre class = 'prettyprint lang-r'>work_locs &lt;- unique(select(dat, work_longitude, work_latitude)) %&gt;%
+    filter(!is.na(work_longitude))
+names(work_locs) &lt;- c(&#39;lon&#39;, &#39;lat&#39;)
+
+<b>work_locs &lt;- adply(work_locs, 1, 
+  function(rr) data.frame(cost=p2ls_cost(dat, rr$lon, rr$lat)))
+</b>work_locs$goodness &lt;- 1-(work_locs$cost / max(work_locs$cost))</pre>
+
+</article></slide><slide class=''><hgroup><h2>Placing Workplaces on the Map</h2></hgroup><article  id="placing-workplaces-on-the-map-1">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/plotwork.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart336549ee5263
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>We Want the Best! </h2><h3> (ignoring roads, rivers, subways, traffic&#8230;)</h3></hgroup><article  id="we-want-the-best-ignoring-roads-rivers-subways-traffic...">
+
+</article></slide><slide class=''><hgroup><h2>Optimization &#8211; Nelder-Mead/Simplex</h2></hgroup><article  id="optimization----nelder-meadsimplex">
+
+<p><img src="neldermeadsteps.gif" height="350px"/></p>
+
+<ul>
+<li>gradient-free, heuristic nonlinear optimization</li>
+<li>not the state of the art, but good enough</li>
+<li>this problem is actually convex; could solve it much faster</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Optimization in R</h2></hgroup><article  id="optimization-in-r">
+
+<div class="scrollbox">
+<pre class = 'prettyprint lang-r'>p2ls_cost_opt &lt;- function(params) {
+    p2ls_cost(dat, params[[2]], params[[1]]) # lon then lat...
+}
+
+best_point &lt;- optim(white_house, 
+                    p2ls_cost_opt, 
+                    control=list(trace=1))</pre>
+
+<pre >##   Nelder-Mead direct search function minimizer
+## function value for initial parameters = 659.085159
+##   Scaled convergence tolerance is 9.82113e-06
+## Stepsize computed as 7.703660
+## BUILD              3 74320.083273 659.085159
+## HI-REDUCTION       5 37254.221075 659.085159
+## HI-REDUCTION       7 33416.429094 659.085159
+## HI-REDUCTION       9 27344.568502 659.085159
+## LO-REDUCTION      11 20329.054875 659.085159
+## HI-REDUCTION      13 7739.064417 659.085159
+## HI-REDUCTION      15 6992.585388 659.085159
+## HI-REDUCTION      17 4511.504646 659.085159
+## LO-REDUCTION      19 3902.268569 659.085159
+## HI-REDUCTION      21 2070.013082 659.085159
+## HI-REDUCTION      23 2044.259019 659.085159
+## LO-REDUCTION      25 1566.838933 659.085159
+## HI-REDUCTION      27 1113.153154 659.085159
+## LO-REDUCTION      29 797.358641 659.085159
+## HI-REDUCTION      31 761.849417 659.085159
+## HI-REDUCTION      33 685.338382 659.085159
+## LO-REDUCTION      35 682.842258 646.293945
+## HI-REDUCTION      37 659.085159 646.293945
+## HI-REDUCTION      39 649.383945 636.194239
+## HI-REDUCTION      41 646.293945 636.194239
+## LO-REDUCTION      43 642.210294 636.194239
+## HI-REDUCTION      45 638.523382 636.194239
+## LO-REDUCTION      47 637.577386 636.194239
+## HI-REDUCTION      49 636.681647 636.194239
+## LO-REDUCTION      51 636.247086 636.033124
+## HI-REDUCTION      53 636.194239 636.008852
+## LO-REDUCTION      55 636.033124 635.909965
+## HI-REDUCTION      57 636.008852 635.909965
+## LO-REDUCTION      59 635.919572 635.899736
+## HI-REDUCTION      61 635.909965 635.896471
+## HI-REDUCTION      63 635.899736 635.891676
+## HI-REDUCTION      65 635.896471 635.889239
+## EXTENSION         67 635.891676 635.876360
+## LO-REDUCTION      69 635.889239 635.875490
+## HI-REDUCTION      71 635.877783 635.875490
+## HI-REDUCTION      73 635.876360 635.873283
+## HI-REDUCTION      75 635.875490 635.871572
+## HI-REDUCTION      77 635.873283 635.871572
+## REFLECTION        79 635.872561 635.869487
+## HI-REDUCTION      81 635.871572 635.869487
+## LO-REDUCTION      83 635.870628 635.869487
+## REFLECTION        85 635.869779 635.869404
+## HI-REDUCTION      87 635.869487 635.868943
+## REFLECTION        89 635.869404 635.868907
+## LO-REDUCTION      91 635.868959 635.868907
+## REFLECTION        93 635.868943 635.868597
+## HI-REDUCTION      95 635.868907 635.868546
+## HI-REDUCTION      97 635.868597 635.868518
+## HI-REDUCTION      99 635.868546 635.868345
+## HI-REDUCTION     101 635.868518 635.868345
+## HI-REDUCTION     103 635.868406 635.868345
+## HI-REDUCTION     105 635.868366 635.868345
+## HI-REDUCTION     107 635.868346 635.868315
+## HI-REDUCTION     109 635.868345 635.868315
+## HI-REDUCTION     111 635.868318 635.868308
+## Exiting from Nelder Mead minimizer
+##     113 function evaluations used</pre></div>
+
+</article></slide><slide class=''><hgroup><h2>Winner!</h2></hgroup><article  id="winner">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/opt1_plot.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart33653d630780
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+<p><strong>1225 Connecticut Ave NW</strong></p>
+
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>But</h2></hgroup><article  id="but">
+
+</article></slide><slide class=''><hgroup><h2>Think of the Children&#8230;</h2><h3>in Montgomery County&#8230;</h3></hgroup><article  id="think-of-the-children...in-montgomery-county...">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/opt1_plot_big.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart3365308183fc
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+</article></slide><slide class=''><hgroup><h2>Three-Location Optimum</h2></hgroup><article  id="three-location-optimum">
+
+<p>Goal:</p>
+
+<ul class = 'build'>
+<li>Make everyone happy,</li>
+<li>at least some of the time,</li>
+<li>by rotating among several venues.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Three-Location Optimum</h2></hgroup><article  id="three-location-optimum-1">
+
+<p>Goal:</p>
+
+<ul>
+<li>Make everyone happy,</li>
+<li>at least some of the time,</li>
+<li>by rotating among several venues.</li>
+</ul>
+
+<p><em>Mini-min</em> cost formula:</p>
+
+<!-- $\min_{v \in 1,2,3} \min_{x_v,y_v} C(x_v, y_v, \text{commutes})$ -->
+
+
+<p>\[ \operatorname{cost} = \sum_{\operatorname{person}} min_{\operatorname{loc}_i} d(\operatorname{loc}_i, \operatorname{commute}_{\operatorname{person}}) \]</p>
+
+<p>(6 parameters vs. 2)</p>
+
+</article></slide><slide class=''><hgroup><h2>Problem </h2><h3> Optimization</h3></hgroup><article  id="problem-optimization">
+
+<p><img src="convex.jpg"/></p>
+
+<p>One-location problem is <strong>convex</strong>.</p>
+
+<p>Three-location problem isn&#39;t &#8211; discrete <code>min</code> in cost formula is a discontinuity.</p>
+
+</article></slide><slide class=''><hgroup><h2>Solution </h2><h3> Global Optimization</h3></hgroup><article  id="solution-global-optimization">
+
+<div class="columns-2">
+<p><img src="DE_1.png" height="200px"/></p>
+
+<ul class = 'build'>
+<li>a.k.a. &quot;Computing Power is Cheap&quot;</li>
+</ul>
+
+<ul class = 'build'>
+<li>Using <code>DEoptim</code> &#8211; Directed Evolution</li>
+</ul>
+
+<ul class = 'build'>
+<li>Handwavy-explanation
+
+<ul>
+<li>Have a <strong>population</strong> of candidate solutions</li>
+<li>Combine pairs, extrapolating in promising directions</li>
+<li>Randomly combine other pairs</li>
+<li>Evaluate the cost function, taking the best</li>
+<li>Repeat until done (bored)</li>
+</ul></li>
+</ul></div>
+
+<!-- http://www.klopfenstein.net/lorenz.aspx/genetic-algorithms -->
+
+
+</article></slide><slide class=''><hgroup><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations">
+
+<div class="scrollbox">
+<pre class = 'prettyprint lang-r'>colnames &lt;- c(&quot;home_longitude&quot;, &quot;home_latitude&quot;,
+          &quot;work_longitude&quot;, &quot;work_latitude&quot;)
+p2lsN_cost &lt;- function(dat, latlons) {
+    # for each pair of latlons, calc p2ls_cost
+    costs &lt;- laply(1:(length(latlons)/2), 
+                   function(i) p2ls_cost_v(dat, 
+                                           colnames, 
+                                           lat=latlons[[i*2-1]], 
+                                           lon=latlons[[i*2]]))
+<b>    sum(aaply(costs, 2, min))
+</b>}
+p2lsN_cost_opt &lt;- function(latlons) {
+    p2lsN_cost(dat, latlons)
+}</pre></div>
+
+</article></slide><slide class=''><hgroup><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations-1">
+
+<iframe src='
+./loc-opt-demo-slides_files/figure-html/threelocmap.html
+' scrolling='no' seamless
+class='rChart leaflet '
+id=iframe-
+chart3b1a7017fb
+></iframe>
+<style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+
+<ul class = 'build'>
+<li>18th and I (not far from GWU)</li>
+<li>Walter Reed</li>
+<li>somewhere in Maryland</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Concluding Thoughts</h2></hgroup><article  id="concluding-thoughts">
+
+<ul class = 'build'>
+<li><em>You</em> can do more than ever.</li>
+</ul>
+
+<ul class = 'build'>
+<li><em>Community</em> of people and tools.</li>
+</ul>
+
+<ul class = 'build'>
+<li><em>Prescriptive Analytics</em> are powerful, accessible.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Four Final Things</h2></hgroup><article  id="four-final-things">
+
+<ul class = 'build'>
+<li>Slides are here: @@@</li>
+</ul>
+
+<ul class = 'build'>
+<li>Come to Data Science DC! Tonight! 7pm! Lightning talks!</li>
+</ul>
+
+<ul class = 'build'>
+<li><code>harlan@datacommunitydc.org</code>, <code>@harlanh</code></li>
+</ul>
+
+<ul class = 'build'>
+<li><strong>Thanks!</strong></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script src="loc-opt-demo-slides_files/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+<script src="loc-opt-demo-slides_files/ioslides-13.5.1/js/prettify/prettify.js"></script>
+<script src="loc-opt-demo-slides_files/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+<script src="loc-opt-demo-slides_files/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+<script src="loc-opt-demo-slides_files/ioslides-13.5.1/js/hammer.js"></script>
+<script src="loc-opt-demo-slides_files/ioslides-13.5.1/js/slide-controller.js"></script>
+<script src="loc-opt-demo-slides_files/ioslides-13.5.1/js/slide-deck.js"></script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "./loc-opt-demo-slides_files/mathjax-2.3.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
