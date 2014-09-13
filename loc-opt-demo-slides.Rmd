@@ -79,13 +79,12 @@ Problem
 Budget
 ------
 
-- $0.00
-- One half-decent data scientist (me)
-- One solid operations researcher (Alan)
-- A couple of weekends*
-- One Macbook Air
-
-<small>* since polished...</small>
+> - $0.00
+> - One half-decent data scientist (me)
+> - One solid operations researcher (Alan)
+> - A couple of weekends (more since then)
+> - One Macbook Air
+> - R and other modern open-source tools
 
 Data
 ----
@@ -176,10 +175,44 @@ How'd He Do That?!
 
 <img src="Rlogo-2.png" height="150px"/>
 
-- `rmarkdown` -- alternate text and code in one document
-- `ioslides` -- HTML5 slide shows
-- `rCharts` -- create web-based charts and maps in R
-- `Leaflet` -- Javascript map library using OpenStreetMap
+> - `rmarkdown` -- this slide deck is 700 lines, code to solve problem + slides to explain it
+> - `ioslides` -- HTML5 slide shows
+> - `rCharts` -- create web-based charts and maps in R
+> - `Leaflet` -- Javascript map library using OpenStreetMap
+
+Mapping R Code
+--------------
+
+<div class="scrollbox">
+<small>
+```{r map_commutes2, echo=TRUE, eval=FALSE}
+# slightly simplified
+mk_commuteline <- function(lat1, lon1, lat2, lon2) {
+    list(type='Feature',
+         geometry=list(type='LineString', 
+                       coordinates=list(c(lon1, lat1), c(lon2, lat2))))
+}
+
+plot_with_linesegs <- function (lat1, lon1, lat2, lon2, 
+                                center=white_house, fn=mk_commuteline) {
+    ### <b>
+    map <- Leaflet$new()
+    map$setView(center, zoom = 10)
+    map$tileLayer(provider = 'Stamen.Toner')
+    
+    commute_lines <- lapply(seq_along(lat1), 
+                          function(i) fn(lat1[[i]], lon1[[i]],
+                                         lat2[[i]], lon2[[i]]))
+    map$geoJson(commute_lines, 
+              style=list(color="#ff5800", weight=5, opacity=0.65))
+    ### </b>
+    map
+}
+
+with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))
+```
+</small>
+</div>
 
 Task
 ====
@@ -270,8 +303,7 @@ tbl2circlemap(qq)
 ```
 
 Alice works in DC; Bob works in Baltimore,<br>_but has to make two round-trips per day_. 
-
-Where should Alice and Bob live?
+Now where?
 
 But What If?
 ------------
@@ -288,7 +320,7 @@ tbl2circlemap(qq)
 
 ```
 
-Jessup = $2/3 + 2/3 + 1/3 + 1/3 + 1/3 + 1/3 = 2~2/3$
+Jessup = $\frac23 + \frac23 + \frac13 + \frac13 + \frac13 + \frac13 = 2\frac23$
 
 Baltimore = $1 + 1 + 0 + 0 + 0 + 0 = 2$ 
 
@@ -431,42 +463,9 @@ p2ls_cost_v <- function(df, cols, lon, lat, km_per_degree=69.11) {
 </small>
 </div>
 
-Mapping R Code (tangent)
---------------
 
-<div class="scrollbox">
-<small>
-```{r map_commutes2, echo=TRUE, eval=FALSE}
-# slightly simplified
-mk_commuteline <- function(lat1, lon1, lat2, lon2) {
-    list(type='Feature',
-         geometry=list(type='LineString', 
-                       coordinates=list(c(lon1, lat1), c(lon2, lat2))))
-}
-
-plot_with_linesegs <- function (lat1, lon1, lat2, lon2, 
-                                center=white_house, fn=mk_commuteline) {
-    ### <b>
-    map <- Leaflet$new()
-    map$setView(center, zoom = 10)
-    map$tileLayer(provider = 'Stamen.Toner')
-    
-    commute_lines <- lapply(seq_along(lat1), 
-                          function(i) fn(lat1[[i]], lon1[[i]],
-                                         lat2[[i]], lon2[[i]]))
-    map$geoJson(commute_lines, 
-              style=list(color="#ff5800", weight=5, opacity=0.65))
-    ### </b>
-    map
-}
-
-with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))
-```
-</small>
-</div>
-
-Placing Workplaces on the Map
------------------------------
+Scoring Workspaces
+------------------
 
 ```{r work_costs, echo=TRUE}
 work_locs <- unique(select(dat, work_longitude, work_latitude)) %>%
@@ -474,19 +473,20 @@ work_locs <- unique(select(dat, work_longitude, work_latitude)) %>%
 names(work_locs) <- c('lon', 'lat')
 
 ### <b>
-work_locs <- adply(work_locs, 1, 
-  function(rr) data.frame(cost=p2ls_cost(dat, rr$lon, rr$lat)))
+work_locs <- work_locs %>%
+    rowwise() %>%
+    do(data.frame(., cost=p2ls_cost(dat, .$lon, .$lat)))
 ### </b>
 work_locs$goodness <- 1-(work_locs$cost / max(work_locs$cost))
 ```
 
-Placing Workplaces on the Map
------------------------------
+Scoring Workspaces
+------------------
 
 ```{r plotcircles}
 mk_circle <- function(lat, lon, color) {
     list(type='Feature',
-         properties=list(color='black', fillColor=mnsl(sprintf("5R %d/10", color), fix=TRUE)),
+         properties=list(color='black', fillColor=mnsl(sprintf("5G %d/10", color), fix=TRUE)),
          geometry=list(type='Point', coordinates=c(lon, lat)))
 }
 
@@ -510,7 +510,7 @@ plot_with_circles <- function(latloncost, center=white_house, zoomlevel=10) {
       fillColor: feature.properties.fillColor,
       weight: 1,
       opacity: 0,
-      fillOpacity: 0.9
+      fillOpacity: 0.95
   });
       } !#')
      
@@ -521,15 +521,24 @@ plot_with_circles <- function(latloncost, center=white_house, zoomlevel=10) {
 
 ```{r plotwork, results='asis'}
 plot_with_circles(work_locs, zoom=11)
+
 ```
 
 We Want the Best! | (ignoring roads, rivers, subways, traffic...)
 ================
 
+Optimization
+------------
+
+<img src="convex.jpg"/>
+
+$$ \underset{loc}{\operatorname{argmin}} \sum_{person} d(loc, \operatorname{commute}_{person}) $$
+
+
 Optimization -- Nelder-Mead/Simplex
 ------------
 
-<img src="neldermeadsteps.gif" height="350px"/>
+<img src="neldermeadsteps.gif" height="325px"/>
 
 * gradient-free, heuristic nonlinear optimization
 * not the state of the art, but good enough
@@ -556,7 +565,6 @@ Winner!
 ```{r opt1_plot, results='asis'}
 plot_with_circles(data.frame(lat=best_point$par[[1]], lon=best_point$par[[2]], cost=0),
                   zoom=14)
-
 ```
 
 **1225 Connecticut Ave NW**
@@ -591,16 +599,14 @@ Goal:
 
 _Mini-min_ cost formula:
 
-<!-- $\min_{v \in 1,2,3} \min_{x_v,y_v} C(x_v, y_v, \text{commutes})$ -->
-
-$$ \operatorname{cost} = \sum_{\operatorname{person}} min_{\operatorname{loc}_i} d(\operatorname{loc}_i, \operatorname{commute}_{\operatorname{person}}) $$
+$$ \underset{loc}{\operatorname{argmin}} \sum_{person} \min_{loc_i} d(loc_i, \operatorname{commute}_{person}) $$
 
 (6 parameters vs. 2)
 
 Problem | Optimization
 ---------------------
 
-<img src="convex.jpg"/>
+<img src="convex.jpg" height="250px"/>
 
 One-location problem is __convex__.
 
@@ -618,7 +624,7 @@ Solution | Global Optimization
 
 > + Handwavy-explanation
     - Have a __population__ of candidate solutions
-    - Combine pairs, extrapolating in promising directions
+    - Combine triples, extrapolating in promising directions
     - Randomly combine other pairs
     - Evaluate the cost function, taking the best
     - Repeat until done (bored)
@@ -627,8 +633,8 @@ Solution | Global Optimization
 
 <!-- http://www.klopfenstein.net/lorenz.aspx/genetic-algorithms -->
 
-Best Three Meetup Locations
----------------------------
+Cost of Meetup Locations
+------------------------
 
 <div class="scrollbox">
 ```{r threelocfns, echo=TRUE}
@@ -636,6 +642,7 @@ colnames <- c("home_longitude", "home_latitude",
           "work_longitude", "work_latitude")
 p2lsN_cost <- function(dat, latlons) {
     # for each pair of latlons, calc p2ls_cost
+    # result is 3 x # of people matrix
     costs <- laply(1:(length(latlons)/2), 
                    function(i) p2ls_cost_v(dat, 
                                            colnames, 
@@ -656,9 +663,9 @@ Best Three Meetup Locations
 ---------------------------
 
 ```{r threeloc, cache=TRUE}
-# constrain the points to be not too far from DC (Manassas to B'more, roughly)
-lower_box <- rep(c(38.693408, -77.448911), 3)
-upper_box <- rep(c(39.284748, -76.668881), 3)
+# constrain the points to be within a square that surrounds the beltway
+lower_box <- rep(c(38.793053, -77.222286), 3)
+upper_box <- rep(c(39.024943, -76.849438), 3)
 
 three_loc_de <- DEoptim(p2lsN_cost_opt, lower=lower_box, upper=upper_box,
                      control=list(trace=TRUE, NP=150, itermax=100, c=.1, strategy=3))
@@ -672,11 +679,11 @@ threelocdf <- data.frame(lat=three_loc_de$optim$bestmem[c(1,3,5)],
 plot_with_circles(threelocdf, zoom=10)
 ```
 
-> - 18th and I (not far from GWU)
-> - Walter Reed
-> - somewhere in Maryland
+- **15th and M**, near the Post
+- **Arlington**, West of National Airport
+- off **Rockville Pike**
 
-Concluding Thoughts
+Three Concluding Thoughts
 -------------------
 
 > * _You_ can do more than ever.
@@ -688,9 +695,9 @@ Concluding Thoughts
 Four Final Things
 -----------
 
-> * Slides are here: @@@
+> * Slides are here: https://github.com/HarlanH/loc-opt-demo-slides
 
-> * Come to Data Science DC! Tonight! 7pm! Lightning talks!
+> * Come to Data Science DC! Tonight! 7pm! Lightning talks! <img src="DSDClogo2014_tr_400square.png" height="150px"/>
 
 > * `harlan@datacommunitydc.org`,  `@harlanh`
 

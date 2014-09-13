@@ -135,15 +135,14 @@
 
 </article></slide><slide class=''><hgroup><h2>Budget</h2></hgroup><article  id="budget">
 
-<ul>
+<ul class = 'build'>
 <li>$0.00</li>
 <li>One half-decent data scientist (me)</li>
 <li>One solid operations researcher (Alan)</li>
-<li>A couple of weekends*</li>
+<li>A couple of weekends (more since then)</li>
 <li>One Macbook Air</li>
+<li>R and other modern open-source tools</li>
 </ul>
-
-<p><small>* since polished&#8230;</small></p>
 
 </article></slide><slide class=''><hgroup><h2>Data</h2></hgroup><article  id="data">
 
@@ -277,12 +276,42 @@ chart20b43acbdf98
 
 <p><img src="Rlogo-2.png" height="150px"/></p>
 
-<ul>
-<li><code>rmarkdown</code> &#8211; alternate text and code in one document</li>
+<ul class = 'build'>
+<li><code>rmarkdown</code> &#8211; this slide deck is 700 lines, code to solve problem + slides to explain it</li>
 <li><code>ioslides</code> &#8211; HTML5 slide shows</li>
 <li><code>rCharts</code> &#8211; create web-based charts and maps in R</li>
 <li><code>Leaflet</code> &#8211; Javascript map library using OpenStreetMap</li>
 </ul>
+
+</article></slide><slide class=''><hgroup><h2>Mapping R Code</h2></hgroup><article  id="mapping-r-code">
+
+<div class="scrollbox">
+<p><small></p>
+
+<pre class = 'prettyprint lang-r'># slightly simplified
+mk_commuteline &lt;- function(lat1, lon1, lat2, lon2) {
+    list(type=&#39;Feature&#39;,
+         geometry=list(type=&#39;LineString&#39;, 
+                       coordinates=list(c(lon1, lat1), c(lon2, lat2))))
+}
+
+plot_with_linesegs &lt;- function (lat1, lon1, lat2, lon2, 
+                                center=white_house, fn=mk_commuteline) {
+<b>    map &lt;- Leaflet$new()
+    map$setView(center, zoom = 10)
+    map$tileLayer(provider = &#39;Stamen.Toner&#39;)
+    
+    commute_lines &lt;- lapply(seq_along(lat1), 
+                          function(i) fn(lat1[[i]], lon1[[i]],
+                                         lat2[[i]], lon2[[i]]))
+    map$geoJson(commute_lines, 
+              style=list(color=&quot;#ff5800&quot;, weight=5, opacity=0.65))
+</b>    map
+}
+
+with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))</pre>
+
+</small></div>
 
 </article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Task</h2></hgroup><article  id="task">
 
@@ -344,9 +373,7 @@ chart205c62a6e7ae
 <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 
 
-<p>Alice works in DC; Bob works in Baltimore,<br><em>but has to make two round-trips per day</em>.</p>
-
-<p>Where should Alice and Bob live?</p>
+<p>Alice works in DC; Bob works in Baltimore,<br><em>but has to make two round-trips per day</em>. Now where?</p>
 
 </article></slide><slide class=''><hgroup><h2>But What If?</h2></hgroup><article  id="but-what-if-1">
 
@@ -360,7 +387,7 @@ chart2088463e3236
 <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 
 
-<p>Jessup = \(2/3 + 2/3 + 1/3 + 1/3 + 1/3 + 1/3 = 2~2/3\)</p>
+<p>Jessup = \(\frac23 + \frac23 + \frac13 + \frac13 + \frac13 + \frac13 = 2\frac23\)</p>
 
 <p>Baltimore = \(1 + 1 + 0 + 0 + 0 + 0 = 2\)</p>
 
@@ -498,63 +525,40 @@ p2ls_cost_v &lt;- function(df, cols, lon, lat, km_per_degree=69.11) {
 
 </small></div>
 
-</article></slide><slide class=''><hgroup><h2>Mapping R Code (tangent)</h2></hgroup><article  id="mapping-r-code-tangent">
-
-<div class="scrollbox">
-<p><small></p>
-
-<pre class = 'prettyprint lang-r'># slightly simplified
-mk_commuteline &lt;- function(lat1, lon1, lat2, lon2) {
-    list(type=&#39;Feature&#39;,
-         geometry=list(type=&#39;LineString&#39;, 
-                       coordinates=list(c(lon1, lat1), c(lon2, lat2))))
-}
-
-plot_with_linesegs &lt;- function (lat1, lon1, lat2, lon2, 
-                                center=white_house, fn=mk_commuteline) {
-<b>    map &lt;- Leaflet$new()
-    map$setView(center, zoom = 10)
-    map$tileLayer(provider = &#39;Stamen.Toner&#39;)
-    
-    commute_lines &lt;- lapply(seq_along(lat1), 
-                          function(i) fn(lat1[[i]], lon1[[i]],
-                                         lat2[[i]], lon2[[i]]))
-    map$geoJson(commute_lines, 
-              style=list(color=&quot;#ff5800&quot;, weight=5, opacity=0.65))
-</b>    map
-}
-
-with(dat, plot_with_linesegs(home_latitude, home_longitude, work_latitude, work_longitude))</pre>
-
-</small></div>
-
-</article></slide><slide class=''><hgroup><h2>Placing Workplaces on the Map</h2></hgroup><article  id="placing-workplaces-on-the-map">
+</article></slide><slide class=''><hgroup><h2>Scoring Workspaces</h2></hgroup><article  id="scoring-workspaces">
 
 <pre class = 'prettyprint lang-r'>work_locs &lt;- unique(select(dat, work_longitude, work_latitude)) %&gt;%
     filter(!is.na(work_longitude))
 names(work_locs) &lt;- c(&#39;lon&#39;, &#39;lat&#39;)
 
-<b>work_locs &lt;- adply(work_locs, 1, 
-  function(rr) data.frame(cost=p2ls_cost(dat, rr$lon, rr$lat)))
+<b>work_locs &lt;- work_locs %&gt;%
+    rowwise() %&gt;%
+    do(data.frame(., cost=p2ls_cost(dat, .$lon, .$lat)))
 </b>work_locs$goodness &lt;- 1-(work_locs$cost / max(work_locs$cost))</pre>
 
-</article></slide><slide class=''><hgroup><h2>Placing Workplaces on the Map</h2></hgroup><article  id="placing-workplaces-on-the-map-1">
+</article></slide><slide class=''><hgroup><h2>Scoring Workspaces</h2></hgroup><article  id="scoring-workspaces-1">
 
 <iframe src='
 ./loc-opt-demo-slides_files/figure-html/plotwork.html
 ' scrolling='no' seamless
 class='rChart leaflet '
 id=iframe-
-chart336549ee5263
+chart540258be42c6
 ></iframe>
 <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 
 
 </article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>We Want the Best! </h2><h3> (ignoring roads, rivers, subways, traffic&#8230;)</h3></hgroup><article  id="we-want-the-best-ignoring-roads-rivers-subways-traffic...">
 
+</article></slide><slide class=''><hgroup><h2>Optimization</h2></hgroup><article  id="optimization">
+
+<p><img src="convex.jpg"/></p>
+
+<p>\[ \underset{loc}{\operatorname{argmin}} \sum_{person} d(loc, \operatorname{commute}_{person}) \]</p>
+
 </article></slide><slide class=''><hgroup><h2>Optimization &#8211; Nelder-Mead/Simplex</h2></hgroup><article  id="optimization----nelder-meadsimplex">
 
-<p><img src="neldermeadsteps.gif" height="350px"/></p>
+<p><img src="neldermeadsteps.gif" height="325px"/></p>
 
 <ul>
 <li>gradient-free, heuristic nonlinear optimization</li>
@@ -642,7 +646,7 @@ best_point &lt;- optim(white_house,
 ' scrolling='no' seamless
 class='rChart leaflet '
 id=iframe-
-chart33653d630780
+chart5402331202ae
 ></iframe>
 <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 
@@ -685,16 +689,13 @@ chart3365308183fc
 
 <p><em>Mini-min</em> cost formula:</p>
 
-<!-- $\min_{v \in 1,2,3} \min_{x_v,y_v} C(x_v, y_v, \text{commutes})$ -->
-
-
-<p>\[ \operatorname{cost} = \sum_{\operatorname{person}} min_{\operatorname{loc}_i} d(\operatorname{loc}_i, \operatorname{commute}_{\operatorname{person}}) \]</p>
+<p>\[ \underset{loc}{\operatorname{argmin}} \sum_{person} \min_{loc_i} d(loc_i, \operatorname{commute}_{person}) \]</p>
 
 <p>(6 parameters vs. 2)</p>
 
 </article></slide><slide class=''><hgroup><h2>Problem </h2><h3> Optimization</h3></hgroup><article  id="problem-optimization">
 
-<p><img src="convex.jpg"/></p>
+<p><img src="convex.jpg" height="250px"/></p>
 
 <p>One-location problem is <strong>convex</strong>.</p>
 
@@ -718,7 +719,7 @@ chart3365308183fc
 
 <ul>
 <li>Have a <strong>population</strong> of candidate solutions</li>
-<li>Combine pairs, extrapolating in promising directions</li>
+<li>Combine triples, extrapolating in promising directions</li>
 <li>Randomly combine other pairs</li>
 <li>Evaluate the cost function, taking the best</li>
 <li>Repeat until done (bored)</li>
@@ -728,13 +729,14 @@ chart3365308183fc
 <!-- http://www.klopfenstein.net/lorenz.aspx/genetic-algorithms -->
 
 
-</article></slide><slide class=''><hgroup><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations">
+</article></slide><slide class=''><hgroup><h2>Cost of Meetup Locations</h2></hgroup><article  id="cost-of-meetup-locations">
 
 <div class="scrollbox">
 <pre class = 'prettyprint lang-r'>colnames &lt;- c(&quot;home_longitude&quot;, &quot;home_latitude&quot;,
           &quot;work_longitude&quot;, &quot;work_latitude&quot;)
 p2lsN_cost &lt;- function(dat, latlons) {
     # for each pair of latlons, calc p2ls_cost
+    # result is 3 x # of people matrix
     costs &lt;- laply(1:(length(latlons)/2), 
                    function(i) p2ls_cost_v(dat, 
                                            colnames, 
@@ -746,25 +748,25 @@ p2lsN_cost_opt &lt;- function(latlons) {
     p2lsN_cost(dat, latlons)
 }</pre></div>
 
-</article></slide><slide class=''><hgroup><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations-1">
+</article></slide><slide class=''><hgroup><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations">
 
 <iframe src='
 ./loc-opt-demo-slides_files/figure-html/threelocmap.html
 ' scrolling='no' seamless
 class='rChart leaflet '
 id=iframe-
-chart3b1a7017fb
+chart53ab34682816
 ></iframe>
 <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 
 
-<ul class = 'build'>
-<li>18th and I (not far from GWU)</li>
-<li>Walter Reed</li>
-<li>somewhere in Maryland</li>
+<ul>
+<li><strong>15th and M</strong> (near the Post)</li>
+<li><strong>Arlington</strong>, West of National Airport</li>
+<li>off <strong>Rockville Pike</strong></li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>Concluding Thoughts</h2></hgroup><article  id="concluding-thoughts">
+</article></slide><slide class=''><hgroup><h2>Three Concluding Thoughts</h2></hgroup><article  id="three-concluding-thoughts">
 
 <ul class = 'build'>
 <li><em>You</em> can do more than ever.</li>
@@ -781,11 +783,11 @@ chart3b1a7017fb
 </article></slide><slide class=''><hgroup><h2>Four Final Things</h2></hgroup><article  id="four-final-things">
 
 <ul class = 'build'>
-<li>Slides are here: @@@</li>
+<li>Slides are here: <a href='https://github.com/HarlanH/loc-opt-demo-slides' title=''>https://github.com/HarlanH/loc-opt-demo-slides</a></li>
 </ul>
 
 <ul class = 'build'>
-<li>Come to Data Science DC! Tonight! 7pm! Lightning talks!</li>
+<li>Come to Data Science DC! Tonight! 7pm! Lightning talks! <img src="DSDClogo2014_tr_400square.png" height="100px"/></li>
 </ul>
 
 <ul class = 'build'>
