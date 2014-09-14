@@ -368,43 +368,46 @@ Back to Meetups!
 Cost Functions
 --------------
 
-__How good is a particular venue/location?__
+__How bad is a particular venue/location?__
 
 - Work Distance
 
-$$ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert $$
+$$ d(venue, work) = \| x_{venue} - x_{work} \|_2 + \| y_{venue} - y_{work} \|_2 $$
 
 - Commute Distance
 
-$$ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) $$
+$$ d(venue, commute) = \min(d(venue, home),\\  
+\qquad d(venue, work), d(venue, commute line)) $$
 
 Cost Functions
 --------------
 
-__How good is a particular venue/location?__
+__How bad is a particular venue/location?__
 
 - Work Distance
 
-$$ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert $$
+$$ d(venue, work) = \| x_{venue} - x_{work} \|_2 + \| y_{venue} - y_{work} \|_2 $$
 
 - Commute Distance
 
-$$ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) $$
+$$ d(venue, commute) = \min(d(venue, home),\\
+\qquad d(venue, work), d(venue, commute line)) $$
 
 <img src="commute-distance1.png" height="130px"/>
 
 Cost Functions
 --------------
 
-__How good is a particular venue/location?__
+__How bad is a particular venue/location?__
 
 - Work Distance
 
-$$ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert $$
+$$ d(venue, work) = \| x_{venue} - x_{work} \|_2 + \| y_{venue} - y_{work} \|_2 $$
 
 - Commute Distance
 
-$$ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) $$
+$$ d(venue, commute) = \min(d(venue, home),\\
+\qquad d(venue, work), d(venue, commute line)) $$
 
 <img src="commute-distance2.png" height="180px"/>
 
@@ -530,7 +533,7 @@ We Want the Best! | (ignoring roads, rivers, subways, traffic...)
 Optimization
 ------------
 
-<img src="convex.jpg"/>
+<img src="opt1.png" height="250px"/>
 
 $$ \underset{loc}{\operatorname{argmin}} \sum_{person} d(loc, \operatorname{commute}_{person}) $$
 
@@ -606,7 +609,7 @@ $$ \underset{loc}{\operatorname{argmin}} \sum_{person} \min_{loc_i} d(loc_i, \op
 Problem | Optimization
 ---------------------
 
-<img src="convex.jpg" height="250px"/>
+<img src="opt2.png" height="250px"/>
 
 One-location problem is __convex__.
 
@@ -660,6 +663,10 @@ p2lsN_cost_opt <- function(latlons) {
 </div>
 
 Best Three Meetup Locations
+===========================
+
+
+Best Three Meetup Locations
 ---------------------------
 
 ```{r threeloc, cache=TRUE}
@@ -695,7 +702,7 @@ Three Concluding Thoughts
 Four Final Things
 -----------
 
-> * Slides are here: https://github.com/HarlanH/loc-opt-demo-slides
+> * Slides are here:<br>https://github.com/HarlanH/loc-opt-demo-slides
 
 > * Come to Data Science DC! Tonight! 7pm! Lightning talks! <img src="DSDClogo2014_tr_400square.png" height="150px"/>
 

@@ -437,53 +437,56 @@ chart2088463e3236
 
 </article></slide><slide class=''><hgroup><h2>Cost Functions</h2></hgroup><article  id="cost-functions">
 
-<p><strong>How good is a particular venue/location?</strong></p>
+<p><strong>How bad is a particular venue/location?</strong></p>
 
 <ul>
 <li>Work Distance</li>
 </ul>
 
-<p>\[ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert \]</p>
+<p>\[ d(venue, work) = \| x_{venue} - x_{work} \|_2 + \| y_{venue} - y_{work} \|_2 \]</p>
 
 <ul>
 <li>Commute Distance</li>
 </ul>
 
-<p>\[ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) \]</p>
+<p>\[ d(venue, commute) = \min(d(venue, home),\\  
+\qquad d(venue, work), d(venue, commute line)) \]</p>
 
 </article></slide><slide class=''><hgroup><h2>Cost Functions</h2></hgroup><article  id="cost-functions-1">
 
-<p><strong>How good is a particular venue/location?</strong></p>
+<p><strong>How bad is a particular venue/location?</strong></p>
 
 <ul>
 <li>Work Distance</li>
 </ul>
 
-<p>\[ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert \]</p>
+<p>\[ d(venue, work) = \| x_{venue} - x_{work} \|_2 + \| y_{venue} - y_{work} \|_2 \]</p>
 
 <ul>
 <li>Commute Distance</li>
 </ul>
 
-<p>\[ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) \]</p>
+<p>\[ d(venue, commute) = \min(d(venue, home),\\
+\qquad d(venue, work), d(venue, commute line)) \]</p>
 
 <p><img src="commute-distance1.png" height="130px"/></p>
 
 </article></slide><slide class=''><hgroup><h2>Cost Functions</h2></hgroup><article  id="cost-functions-2">
 
-<p><strong>How good is a particular venue/location?</strong></p>
+<p><strong>How bad is a particular venue/location?</strong></p>
 
 <ul>
 <li>Work Distance</li>
 </ul>
 
-<p>\[ C = \lvert x_{venue} - x_{work} \rvert + \lvert y_{venue} - y_{work} \rvert \]</p>
+<p>\[ d(venue, work) = \| x_{venue} - x_{work} \|_2 + \| y_{venue} - y_{work} \|_2 \]</p>
 
 <ul>
 <li>Commute Distance</li>
 </ul>
 
-<p>\[ C = \min(\text{work distance}, \text{home distance}, \text{tangent distance}) \]</p>
+<p>\[ d(venue, commute) = \min(d(venue, home),\\
+\qquad d(venue, work), d(venue, commute line)) \]</p>
 
 <p><img src="commute-distance2.png" height="180px"/></p>
 
@@ -552,7 +555,7 @@ chart540258be42c6
 
 </article></slide><slide class=''><hgroup><h2>Optimization</h2></hgroup><article  id="optimization">
 
-<p><img src="convex.jpg"/></p>
+<p><img src="opt1.png" height="250px"/></p>
 
 <p>\[ \underset{loc}{\operatorname{argmin}} \sum_{person} d(loc, \operatorname{commute}_{person}) \]</p>
 
@@ -695,7 +698,7 @@ chart3365308183fc
 
 </article></slide><slide class=''><hgroup><h2>Problem </h2><h3> Optimization</h3></hgroup><article  id="problem-optimization">
 
-<p><img src="convex.jpg" height="250px"/></p>
+<p><img src="opt2.png" height="250px"/></p>
 
 <p>One-location problem is <strong>convex</strong>.</p>
 
@@ -748,7 +751,9 @@ p2lsN_cost_opt &lt;- function(latlons) {
     p2lsN_cost(dat, latlons)
 }</pre></div>
 
-</article></slide><slide class=''><hgroup><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations">
+</article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations">
+
+</article></slide><slide class=''><hgroup><h2>Best Three Meetup Locations</h2></hgroup><article  id="best-three-meetup-locations-1">
 
 <iframe src='
 ./loc-opt-demo-slides_files/figure-html/threelocmap.html
@@ -761,7 +766,7 @@ chart53ab34682816
 
 
 <ul>
-<li><strong>15th and M</strong> (near the Post)</li>
+<li><strong>15th and M</strong>, near the Post</li>
 <li><strong>Arlington</strong>, West of National Airport</li>
 <li>off <strong>Rockville Pike</strong></li>
 </ul>
@@ -783,11 +788,11 @@ chart53ab34682816
 </article></slide><slide class=''><hgroup><h2>Four Final Things</h2></hgroup><article  id="four-final-things">
 
 <ul class = 'build'>
-<li>Slides are here: <a href='https://github.com/HarlanH/loc-opt-demo-slides' title=''>https://github.com/HarlanH/loc-opt-demo-slides</a></li>
+<li>Slides are here:<br><a href='https://github.com/HarlanH/loc-opt-demo-slides' title=''>https://github.com/HarlanH/loc-opt-demo-slides</a></li>
 </ul>
 
 <ul class = 'build'>
-<li>Come to Data Science DC! Tonight! 7pm! Lightning talks! <img src="DSDClogo2014_tr_400square.png" height="100px"/></li>
+<li>Come to Data Science DC! Tonight! 7pm! Lightning talks! <img src="DSDClogo2014_tr_400square.png" height="150px"/></li>
 </ul>
 
 <ul class = 'build'>
